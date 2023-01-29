@@ -12,7 +12,22 @@ services:
       # ports:
       # - 8000:8000
     env_file:
-      - ./.env/dev.env
+      - ./django/.env
+
+  demo2:
+    build:
+      context: ./django2/
+    # command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn demo2.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - ./django2/:/usr/src/demo2/
+      - static_files_demo2:/usr/src/demo2/staticfiles
+    expose:
+      - 8000
+      # ports:
+      # - 8000:8000
+    env_file:
+      - ./django2/.env
 
   nginx:
      build:
@@ -23,6 +38,7 @@ services:
        - ./nginx/html/:/usr/share/nginx/html/
        - ./nginx/conf.d/:/etc/nginx/conf.d/
        - static_files:/home/app/staticfiles
+       - static_files_demo2:/home/demo2/staticfiles
 
   dns:
       build:
@@ -38,3 +54,4 @@ services:
 
 volumes:
   static_files:
+  static_files_demo2:

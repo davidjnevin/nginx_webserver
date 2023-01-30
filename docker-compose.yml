@@ -1,8 +1,7 @@
 services:
   web:
     build:
-      context: ./django/
-    # command: python manage.py runserver 0.0.0.0:8000
+       context: ./django/
     command: gunicorn demo.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - ./django/:/usr/src/app/
@@ -16,7 +15,7 @@ services:
 
   demo2:
     build:
-      context: ./django2/
+       context: ./django2/
     # command: python manage.py runserver 0.0.0.0:8000
     command: gunicorn demo2.wsgi:application --bind 0.0.0.0:8080
     volumes:
@@ -30,27 +29,27 @@ services:
       - ./django2/.env
 
   nginx:
-     build:
+    build:
        context: ./nginx/
-     ports:
-       - 80:80
-     volumes:
-       - ./nginx/html/:/usr/share/nginx/html/
-       - ./nginx/conf.d/:/etc/nginx/conf.d/
-       - static_files:/home/app/staticfiles
-       - static_files_demo2:/home/demo2/staticfiles
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/html/:/usr/share/nginx/html/
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - static_files:/home/app/staticfiles
+      - static_files_demo2:/home/demo2/staticfiles
 
   dns:
-      build:
-        context: ./dns/
-      restart: always
-      ports:
+    build:
+      context: ./dns/
+    restart: always
+    ports:
         - 53:53
         - 53:53/udp
-      volumes:
+    volumes:
         - ./dns/named.conf:/etc/bind/named.conf
         - ./dns/zone/:/etc/bind/zone/
-      command: named -c /etc/bind/named.conf -g -u named
+    command: named -c /etc/bind/named.conf -g -u named
 
 volumes:
   static_files:
